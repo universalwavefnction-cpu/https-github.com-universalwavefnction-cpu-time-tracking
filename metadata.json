@@ -1,0 +1,5 @@
+{
+  "name": "Zenith Time Tracker",
+  "description": "A comprehensive time-tracking application that allows users to log their activities in 15-minute intervals. It provides detailed data analysis, visualization, and export capabilities to help users understand and optimize their time.",
+  "requestFramePermissions": []
+}
