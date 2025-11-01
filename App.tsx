@@ -7,7 +7,7 @@ import { CategoryManager } from './components/CategoryManager';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Activity, Category } from './types';
 import { DEFAULT_CATEGORIES } from './constants';
-import { parse, format, startOfDay, addMinutes, differenceInMinutes } from 'date-fns';
+import { parse, format, startOfDay, addMinutes, differenceInMinutes, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 
 const App: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
@@ -60,7 +60,7 @@ const App: React.FC = () => {
     setEditingActivity(null);
   };
 
-  const handleSaveActivity = (description: string, categoryId: string) => {
+  const handleSaveActivity = (description: string, categoryId: string, energyLevel: number) => {
     if (selectedSlots.length === 0 || !categoryId) return;
 
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
@@ -76,6 +76,7 @@ const App: React.FC = () => {
       endTime,
       description,
       categoryId,
+      energyLevel,
     };
     
     // Remove the old version of the activity if editing
@@ -105,10 +106,45 @@ const App: React.FC = () => {
     }
   }, [categories, setCategories]);
 
-  const exportToCSV = useCallback(() => {
-    const headers = ['Date', 'Start Time', 'End Time', 'Duration (min)', 'Description', 'Category'];
-    const rows = dailyActivities
-      .sort((a, b) => a.startTime.localeCompare(b.startTime))
+  const handleExport = useCallback((range: 'day' | 'week' | 'month') => {
+    let activitiesToExport: Activity[];
+    let filename: string;
+
+    const startDate = selectedDate;
+
+    switch (range) {
+      case 'day':
+        activitiesToExport = dailyActivities;
+        filename = `time_log_${format(startDate, 'yyyy-MM-dd')}.csv`;
+        break;
+      case 'week':
+        const weekStart = startOfWeek(startDate, { weekStartsOn: 1 }); // Monday
+        const weekEnd = endOfWeek(startDate, { weekStartsOn: 1 });
+        activitiesToExport = activities.filter(a => {
+            const activityDate = parse(a.date, 'yyyy-MM-dd', new Date());
+            return activityDate >= weekStart && activityDate <= weekEnd;
+        });
+        filename = `time_log_week_${format(weekStart, 'yyyy-MM-dd')}.csv`;
+        break;
+      case 'month':
+        const monthStart = startOfMonth(startDate);
+        const monthEnd = endOfMonth(startDate);
+        activitiesToExport = activities.filter(a => {
+            const activityDate = parse(a.date, 'yyyy-MM-dd', new Date());
+            return activityDate >= monthStart && activityDate <= monthEnd;
+        });
+        filename = `time_log_month_${format(monthStart, 'yyyy-MM')}.csv`;
+        break;
+    }
+    
+    if (activitiesToExport.length === 0) {
+      alert(`No activities found for this ${range}.`);
+      return;
+    }
+
+    const headers = ['Date', 'Start Time', 'End Time', 'Duration (min)', 'Description', 'Category', 'Energy Level'];
+    const rows = activitiesToExport
+      .sort((a, b) => `${a.date} ${a.startTime}`.localeCompare(`${b.date} ${b.startTime}`))
       .map(activity => {
         const category = categories.find(c => c.id === activity.categoryId);
         const start = parse(activity.startTime, 'HH:mm', new Date());
@@ -120,7 +156,8 @@ const App: React.FC = () => {
           activity.endTime,
           duration,
           `"${activity.description.replace(/"/g, '""')}"`,
-          category ? `"${category.name.replace(/"/g, '""')}"` : 'Uncategorized'
+          category ? `"${category.name.replace(/"/g, '""')}"` : 'Uncategorized',
+          activity.energyLevel || ''
         ].join(',');
       });
 
@@ -128,14 +165,14 @@ const App: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `time_log_${format(selectedDate, 'yyyy-MM-dd')}.csv`);
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }, [dailyActivities, categories, selectedDate]);
+  }, [activities, dailyActivities, categories, selectedDate]);
 
   return (
-    <div className="min-h-screen font-sans text-slate-800 dark:text-slate-200 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen font-sans text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       <Header
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
@@ -155,7 +192,7 @@ const App: React.FC = () => {
             <DailySummary
               activities={dailyActivities}
               categories={categories}
-              onExport={exportToCSV}
+              onExport={handleExport}
             />
           </div>
         </div>

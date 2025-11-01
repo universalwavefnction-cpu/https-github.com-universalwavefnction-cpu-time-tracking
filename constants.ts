@@ -1,18 +1,18 @@
 import { Category } from './types';
 
 export const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'work', name: 'Work', color: '#2563eb' }, // blue-600
-  { id: 'meeting', name: 'Meeting', color: '#7c3aed' }, // violet-600
-  { id: 'break', name: 'Break', color: '#059669' }, // emerald-600
-  { id: 'exercise', name: 'Exercise', color: '#ea580c' }, // orange-600
-  { id: 'meals', name: 'Meals', color: '#d97706' }, // amber-600
-  { id: 'personal', name: 'Personal', color: '#db2777' }, // pink-600
+  { id: 'work', name: 'Work', color: '#3b82f6' }, // blue-500
+  { id: 'meeting', name: 'Meeting', color: '#8b5cf6' }, // violet-500
+  { id: 'break', name: 'Break', color: '#10b981' }, // emerald-500
+  { id: 'exercise', name: 'Exercise', color: '#f97316' }, // orange-500
+  { id: 'meals', name: 'Meals', color: '#f59e0b' }, // amber-500
+  { id: 'personal', name: 'Personal', color: '#ec4899' }, // pink-500
   { id: 'commute', name: 'Commute', color: '#64748b' }, // slate-500
-  { id: 'learning', name: 'Learning', color: '#0891b2' }, // cyan-600
-  { id: 'social', name: 'Social', color: '#dc2626' }, // red-600
-  { id: 'entertainment', name: 'Entertainment', color: '#c026d3' }, // fuchsia-600
-  { id: 'household', name: 'Household', color: '#65a30d' }, // lime-600
-  { id: 'sleep', name: 'Sleep', color: '#0d9488' }, // teal-600
+  { id: 'learning', name: 'Learning', color: '#06b6d4' }, // cyan-500
+  { id: 'social', name: 'Social', color: '#ef4444' }, // red-500
+  { id: 'entertainment', name: 'Entertainment', color: '#d946ef' }, // fuchsia-500
+  { id: 'household', name: 'Household', color: '#84cc16' }, // lime-500
+  { id: 'sleep', name: 'Sleep', color: '#14b8a6' }, // teal-500
 ];
 
 export const TIME_SLOTS: string[] = Array.from({ length: (23 - 6 + 1) * 4 }, (_, i) => {

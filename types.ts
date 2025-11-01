@@ -12,4 +12,5 @@ export interface Activity {
   endTime: string; // Format: 'HH:mm'
   description: string;
   categoryId: string;
+  energyLevel?: number; // 1-10
 }

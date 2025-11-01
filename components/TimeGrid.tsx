@@ -78,18 +78,18 @@ export const TimeGrid: React.FC<TimeGridProps> = ({ activities, categories, onSe
 
 
   return (
-    <div ref={gridRef} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg select-none">
+    <div ref={gridRef} className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg select-none">
       <div className="relative">
         {TIME_SLOTS.map((time) => (
-          <div key={time} className="relative flex items-center h-10 border-b border-gray-100 dark:border-gray-700/50">
-            <div className="w-16 text-xs text-gray-400 dark:text-gray-500 pr-2 text-right shrink-0">
+          <div key={time} className="relative flex items-center h-10 border-b border-slate-100 dark:border-slate-700/50">
+            <div className="w-16 text-xs text-slate-400 dark:text-slate-500 pr-2 text-right shrink-0">
               {time.endsWith(':00') ? format(parse(time, 'HH:mm', new Date()), 'h a') : ''}
             </div>
             <div
               data-time={time}
               onMouseDown={() => handleMouseDown(time, false)}
               onMouseEnter={() => handleMouseEnter(time)}
-              className="flex-1 h-full border-l border-gray-100 dark:border-gray-700/50"
+              className="flex-1 h-full border-l border-slate-100 dark:border-slate-700/50"
             />
           </div>
         ))}
